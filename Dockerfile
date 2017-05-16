@@ -1,4 +1,4 @@
-FROM fedora:26
+FROM fedora:rawhide
 
 LABEL MAINTAINER "Honza Horak" <hhorak@redhat.com>
 
