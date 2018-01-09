@@ -21,7 +21,7 @@ LABEL summary="MariaDB is a multi-user, multi-threaded SQL database server" \
       io.openshift.expose-services="3306:mysql" \
       io.openshift.tags="database,mysql,mariadb,mariadb101,galera"
 
-ENV NAME=mariadb VERSION=10.1 RELEASE=11 ARCH=x86_64
+ENV NAME=mariadb VERSION=10.1 RELEASE=12 ARCH=x86_64
 LABEL BZComponent="$NAME" \
         Name="$FGC/$NAME" \
         Version="$VERSION" \
