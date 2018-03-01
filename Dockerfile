@@ -35,7 +35,7 @@ EXPOSE 3306
 # to make sure of that.
 RUN INSTALL_PKGS="rsync tar gettext hostname bind-utils mariadb-server policycoreutils" && \
     dnf install -y --setopt=tsflags=nodocs $INSTALL_PKGS && \
-    rpm -V $INSTALL_PKGS && \
+    rpm -V --noghost $INSTALL_PKGS && \
     dnf clean all && \
     mkdir -p /var/lib/mysql/data && chown -R mysql.0 /var/lib/mysql && \
     test "$(id mysql)" = "uid=27(mysql) gid=27(mysql) groups=27(mysql)"
