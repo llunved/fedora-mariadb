@@ -12,16 +12,16 @@ LABEL MAINTAINER "Honza Horak" <hhorak@redhat.com>
 #  * $MYSQL_DATABASE - Name of the database to create
 #  * $MYSQL_ROOT_PASSWORD (Optional) - Password for the 'root' MySQL account
 
-ENV MYSQL_VERSION=10.1 \
+ENV MYSQL_VERSION=10.2 \
     HOME=/var/lib/mysql
 
 LABEL summary="MariaDB is a multi-user, multi-threaded SQL database server" \
       io.k8s.description="MariaDB is a multi-user, multi-threaded SQL database server" \
-      io.k8s.display-name="MariaDB 10.1" \
+      io.k8s.display-name="MariaDB 10.2" \
       io.openshift.expose-services="3306:mysql" \
       io.openshift.tags="database,mysql,mariadb,mariadb101,galera"
 
-ENV NAME=mariadb VERSION=10.1 RELEASE=9 ARCH=x86_64
+ENV NAME=mariadb VERSION=10.2 RELEASE=14 ARCH=x86_64
 LABEL BZComponent="$NAME" \
         Name="$FGC/$NAME" \
         Version="$VERSION" \
