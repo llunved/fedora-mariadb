@@ -1,4 +1,5 @@
-FROM fedora:27
+FROM FROM registry.fedoraproject.org/f30/s2i-core:latest
+
 
 LABEL MAINTAINER "Honza Horak" <hhorak@redhat.com>
 
@@ -21,11 +22,10 @@ LABEL summary="MariaDB is a multi-user, multi-threaded SQL database server" \
       io.openshift.expose-services="3306:mysql" \
       io.openshift.tags="database,mysql,mariadb,mariadb101,galera"
 
-ENV NAME=mariadb VERSION=10.2 RELEASE=14 ARCH=x86_64
+ENV NAME=mariadb VERSION=10.2 ARCH=x86_64
 LABEL BZComponent="$NAME" \
         Name="$FGC/$NAME" \
         Version="$VERSION" \
-        Release="$RELEASE.$DISTTAG" \
         Architecture="$ARCH"
 
 EXPOSE 3306
