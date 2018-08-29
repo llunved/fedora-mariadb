@@ -1,4 +1,4 @@
-FROM FROM registry.fedoraproject.org/f30/s2i-core:latest
+FROM registry.fedoraproject.org/f30/s2i-core:latest
 
 
 LABEL MAINTAINER "Honza Horak" <hhorak@redhat.com>
