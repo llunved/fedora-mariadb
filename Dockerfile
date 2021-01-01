@@ -1,4 +1,9 @@
-FROM registry.fedoraproject.org/f31/s2i-core:latest
+ARG OS_RELEASE=33
+ARG OS_IMAGE=f${OS_RELEASE}-s2i-core:latest
+
+FROM $OS_IMAGE 
+
+#FROM registry.fedoraproject.org/f31/s2i-core:latest
 
 # MariaDB image for OpenShift.
 #
