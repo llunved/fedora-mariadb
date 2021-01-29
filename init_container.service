@@ -1,8 +1,7 @@
 [Unit]
 Description=Init container at first start
 ConditionPathExists=!/etc/init_done
-Requires=mariadb.service
-After=mariadb.service
+Before=mariadb.service
 
 [Service]
 Type=oneshot

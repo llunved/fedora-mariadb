@@ -1,4 +1,5 @@
 tzdata
+findutils
 mariadb
 mariadb-server
 mariadb-server-utils

@@ -11,7 +11,7 @@ LABEL MAINTAINER riek@llunved.net
 
 ENV LANG=C.UTF-8
 
-ENV VOLUMES="/etc/mariadb /var/lib/mysql /usr/share/doc/mariadb /var/log/mariadb /run/mariadb /etc/localtime"
+ENV VOLUMES="/etc/mariadb,/var/lib/mysql,/usr/share/doc/mariadb,/var/log/mariadb"
 
 USER root
 
@@ -37,19 +37,19 @@ RUN mkdir /sysimg \
 RUN cp -v /sysimg/usr/share/zoneinfo/America/New_York /sysimg/etc/localtime
 
 # Move the mariadb config to a doc dir, so we can mount config from the host but export the defaults from the host
-RUN if [ -d /usr/share/doc/mariadb ]; then \
-       mv /usr/share/doc/mariadb /usr/share/doc/mariadb.default ; \
+RUN if [ -d /sysimg/usr/share/doc/mariadb ]; then \
+       mv /sysimg/usr/share/doc/mariadb /sysimg/usr/share/doc/mariadb.default ; \
     else \
        mkdir -pv /sysimg/usr/share/doc/mariadb.default ; \
     fi ; \
     mkdir -pv /sysimg/usr/share/doc/mariadb.default/config
 
 RUN mkdir /sysimg/etc/mariadb && \
-    mv /sysimg/etc/my.cnf /sysimg/etc/my.cnf.d /sysimg/etc/mariadb && \
+    mv -fv /sysimg/etc/my.cnf /sysimg/etc/my.cnf.d /sysimg/etc/mariadb && \
     ln -srfv /sysimg/etc/mariadb/my.cnf /sysimg/etc/my.cnf && \
     ln -srfv /sysimg/etc/mariadb/my.cnf.d /sysimg/etc/my.cnf.d 
    
-RUN for CURF in ${VOLUMES} ; do \
+RUN for CURF in $(tr ',' '\n' <<< "${VOLUMES}") ; do \
         if [ -d /sysimg${CURF} ] && [ "$(ls -A /sysimg${CURF})" ]; then \
             mkdir -pv /sysimg/usr/share/doc/mariadb.default/config${CURF} ; \
             mv -fv /sysimg${CURF}/* /sysimg/usr/share/doc/mariadb.default/config${CURF}/ ;\
@@ -57,9 +57,9 @@ RUN for CURF in ${VOLUMES} ; do \
     done
 
 # Set up systemd inside the container
-ADD init_container.service /sysimg/etc/systemd/system
+ADD init_container.service chown_dirs.service customize_mariadb.service /sysimg/etc/systemd/system
 RUN systemctl --root /sysimg mask systemd-remount-fs.service dev-hugepages.mount sys-fs-fuse-connections.mount systemd-logind.service getty.target console-getty.service && systemctl --root /sysimg disable dnf-makecache.timer dnf-makecache.service
-RUN /usr/bin/systemctl --root /sysimg enable mariadb.service init_container.service
+RUN /usr/bin/systemctl --root /sysimg enable mariadb.service init_container.service chown_dirs.service customize_mariadb.service
 
 
 
@@ -67,20 +67,28 @@ FROM scratch AS runtime
 
 COPY --from=build /sysimg /
 
-WORKDIR /var/lib/mariadb
+WORKDIR /var/lib/mysql
 
-ENV USER="mariadb"
+ENV VOLUMES="/etc/mariadb,/var/lib/mysql,/usr/share/doc/mariadb,/var/log/mariadb"
+ENV CHOWN_USER="mysql"
 ENV CHOWN=true 
-ENV CHOWN_DIRS="/var/lib/mariadb /var/log/mariadb /run/mariadb"
- 
-ENV VOLUMES="/etc/mariadb /var/lib/mysql /usr/share/doc/mariadb /var/log/mariadb /run/mariadb /etc/localtime"
-VOLUME $VOLUMES
+ENV CHOWN_DIRS="/var/lib/mysql,/var/log/mariadb"
+
+VOLUME /etc/mariadb
+VOLUME /var/lib/mysql
+VOLUME /usr/share/doc/mariadb
+VOLUME /var/log/mariadb
 
 ADD ./mariadb_secure_auto.sh \
-    ./init_container.sh /sbin
+    ./init_container.sh \
+    ./customize_mariadb.sh \
+    ./chown_dirs.sh \
+    /sbin
  
 RUN chmod +x /sbin/mariadb_secure_auto.sh \
-             /sbin/init_container.sh
+             /sbin/init_container.sh \
+             /sbin/customize_mariadb.sh \
+             /sbin/chown_dirs.sh
   
 EXPOSE 3306 33060
 CMD ["/usr/sbin/init"]
