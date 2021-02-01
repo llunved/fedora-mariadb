@@ -6,6 +6,7 @@ FROM $OS_IMAGE as build
 ARG OS_RELEASE
 ARG OS_IMAGE
 ARG HTTP_PROXY=""
+ARG DEVBUILD="False"
 
 LABEL MAINTAINER riek@llunved.net
 
@@ -73,6 +74,11 @@ ENV VOLUMES="/etc/mariadb,/var/lib/mysql,/usr/share/doc/mariadb,/var/log/mariadb
 ENV CHOWN_USER="mysql"
 ENV CHOWN=true 
 ENV CHOWN_DIRS="/var/lib/mysql,/var/log/mariadb"
+
+#ENV MARIADB_USER
+#ENV MARIADB_PWD
+#ENV MARIADB_DB
+#ENV MARIADB_ROOTPWD
 
 VOLUME /etc/mariadb
 VOLUME /var/lib/mysql
